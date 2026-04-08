@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { GlobalShaderBackground } from './components/GlobalShaderBackground';
+import { Menu, X, Rocket, User, Cpu, Briefcase, Mail, FileText } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,6 +30,16 @@ function App() {
     };
   }, []);
 
+  const navLinks = [
+    { name: 'Home', href: '#home', icon: <Rocket size={18} /> },
+    { name: 'About', href: '#about', icon: <User size={18} /> },
+    { name: 'Skills', href: '#skills', icon: <Cpu size={18} /> },
+    { name: 'Projects', href: '#projects', icon: <Briefcase size={18} /> },
+    { name: 'Contact', href: '#contact', icon: <Mail size={18} /> },
+  ];
+
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
     <>
       <GlobalShaderBackground />
@@ -35,19 +48,71 @@ function App() {
           <h3 className="logo">
             <span className="neon">P</span>avitthiran R A<span className="logo-spark">✦</span>
           </h3>
-          <ul className="nav-links">
-            <li className="active"><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#skills">Skills</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
+          
+          <ul className="nav-links desktop-only">
+            {navLinks.map((link) => (
+              <li key={link.name}>
+                <a href={link.href}>{link.name}</a>
+              </li>
+            ))}
           </ul>
-          <div className="nav-actions">
+
+          <div className="nav-actions desktop-only">
             <a href="/assets/Pavitthiran_Java_Developer_Resume.pdf" className="nav-btn-solid" download>
               Resume <span className="btn-spark">✦</span>
             </a>
           </div>
+
+          <button 
+            className="menu-toggle" 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle Menu"
+          >
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </nav>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div 
+              className="mobile-menu-overlay"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <ul className="mobile-nav-links">
+                {navLinks.map((link) => (
+                  <motion.li 
+                    key={link.name}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    <a href={link.href} onClick={closeMenu}>
+                      {link.icon} {link.name}
+                    </a>
+                  </motion.li>
+                ))}
+                <motion.li
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <a 
+                    href="/assets/Pavitthiran_Java_Developer_Resume.pdf" 
+                    className="mobile-resume-btn" 
+                    download
+                    onClick={closeMenu}
+                  >
+                    <FileText size={18} /> Resume
+                  </a>
+                </motion.li>
+              </ul>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* HERO */}
         <section className="hero" id="home">
