@@ -124,7 +124,7 @@ void main(){gl_Position=position;}`;
     init() {
       const gl = this.gl;
       const program = this.program!;
-      
+
       this.buffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
@@ -144,14 +144,14 @@ void main(){gl_Position=position;}`;
     render(now = 0) {
       const gl = this.gl;
       const program = this.program;
-      
+
       if (!program || gl.getProgramParameter(program, gl.DELETE_STATUS)) return;
 
       gl.clearColor(0, 0, 0, 1);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.useProgram(program);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-      
+
       gl.uniform2f((program as any).resolution, this.canvas.width, this.canvas.height);
       gl.uniform1f((program as any).time, now * 1e-3);
       gl.uniform2f((program as any).move, this.mouseMove[0], this.mouseMove[1]);
@@ -172,8 +172,8 @@ void main(){gl_Position=position;}`;
 
     constructor(element: HTMLCanvasElement, scale: number) {
       this.scale = scale;
-      
-      const map = (element: HTMLCanvasElement, scale: number, x: number, y: number) => 
+
+      const map = (element: HTMLCanvasElement, scale: number, x: number, y: number) =>
         [x * scale, element.height - y * scale];
 
       element.addEventListener('pointerdown', (e) => {
@@ -218,8 +218,8 @@ void main(){gl_Position=position;}`;
     }
 
     get coords() {
-      return this.pointers.size > 0 
-        ? Array.from(this.pointers.values()).flat() 
+      return this.pointers.size > 0
+        ? Array.from(this.pointers.values()).flat()
         : [0, 0];
     }
 
@@ -230,13 +230,13 @@ void main(){gl_Position=position;}`;
 
   const resize = () => {
     if (!canvasRef.current) return;
-    
+
     const canvas = canvasRef.current;
     const dpr = Math.max(1, 0.5 * window.devicePixelRatio);
-    
+
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
-    
+
     if (rendererRef.current) {
       rendererRef.current.updateScale(dpr);
     }
@@ -244,7 +244,7 @@ void main(){gl_Position=position;}`;
 
   const loop = (now: number) => {
     if (!rendererRef.current || !pointersRef.current) return;
-    
+
     rendererRef.current.updateMouse(pointersRef.current.first);
     rendererRef.current.updatePointerCount(pointersRef.current.count);
     rendererRef.current.updatePointerCoords(pointersRef.current.coords);
@@ -258,23 +258,23 @@ void main(){gl_Position=position;}`;
 
     const canvas = canvasRef.current;
     const dpr = Math.max(1, 0.5 * window.devicePixelRatio);
-    
+
     rendererRef.current = new WebGLRenderer(canvas, dpr);
     pointersRef.current = new PointerHandler(canvas, dpr);
-    
+
     rendererRef.current.setup();
     rendererRef.current.init();
-    
+
     resize();
-    
+
     if (rendererRef.current.test(defaultShaderSource) === null) {
       rendererRef.current.updateShader(defaultShaderSource);
     }
-    
+
     loop(0);
-    
+
     window.addEventListener('resize', resize);
-    
+
     return () => {
       window.removeEventListener('resize', resize);
       if (animationFrameRef.current) {
@@ -344,7 +344,7 @@ void main(void) {
 		col+=.001/d*(cos(sin(i)*vec3(0.1, 1.0, 0.2))+1.);
 		float b=noise(i+p+bg*1.731);
 		col+=.002*b/length(max(p,vec2(b*p.x*.02,p.y)));
-		col=mix(col,vec3(bg*.05, bg*.15, bg*.02),d);
+		col=mix(col,vec3(bg*.01, bg*.03, bg*.005),d);
 	}
 	O=vec4(col,1);
 }`;
